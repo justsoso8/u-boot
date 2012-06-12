@@ -51,9 +51,10 @@
 /*
  * Hardware drivers
  */
-#define CONFIG_CS8900			/* we have a CS8900 on-board	*/
-#define CONFIG_CS8900_BASE	  	0x18800300
-#define CONFIG_CS8900_BUS16		/* follow the Linux driver	*/
+#define CONFIG_DRIVER_DM9000		1
+#define CONFIG_DM9000_BASE		0x18800300
+#define DM9000_IO			CONFIG_DM9000_BASE
+#define DM9000_DATA			(CONFIG_DM9000_BASE+4)
 
 /*
  * select serial console configuration
@@ -176,10 +177,10 @@
 #define CONFIG_ENV_SIZE		0x4000	/* Total Size of Environment Sector */
 
 /*
- * SMDK6400 board specific data
+ * FORLINX6410 board specific data
  */
 
-#define CONFIG_IDENT_STRING	" for SMDK6400"
+#define CONFIG_IDENT_STRING	" for FORLINX6410"
 
 /* base address for uboot */
 #define CONFIG_SYS_PHY_UBOOT_BASE	(CONFIG_SYS_SDRAM_BASE + 0x07e00000)
