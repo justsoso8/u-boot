@@ -712,6 +712,20 @@ smdk6400_config	:	unconfig
 	@$(MKCONFIG) smdk6400 arm arm1176 smdk6400 samsung s3c64xx
 	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
 
+forlinx6410_noUSB_config	\
+forlinx6410_config	:	unconfig
+	@mkdir -p $(obj)include $(obj)board/forlinx6410
+	@mkdir -p $(obj)nand_spl/board/forlinx6410
+	@echo "#define CONFIG_NAND_U_BOOT" > $(obj)include/config.h
+	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
+	@if [ -z "$(findstring forlinx6410_noUSB,$@)" ]; then			\
+		echo "RAM_TEXT = 0x57e00000" >> $(obj)board/forlinx6410/config.tmp;\
+	else										\
+		echo "RAM_TEXT = 0xc7e00000" >> $(obj)board/forlinx6410/config.tmp;\
+	fi
+	#$(MKCONFIG) config arch cpu board vendor soc
+	@$(MKCONFIG) forlinx6410 arm arm1176 - - s3c64xx
+	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
 #########################################################################
 #########################################################################
 
