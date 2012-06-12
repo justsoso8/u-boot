@@ -34,7 +34,11 @@
 /*
  * Architecture magic and machine type
  */
-#define CONFIG_MACH_TYPE		1270
+/*
+ * reference linux kernel/include/asm/mach-types.h
+ * 1004 is generic S3C6400
+ */
+#define CONFIG_MACH_TYPE		1004 /*S3C6400*/
 
 #define CONFIG_DISPLAY_CPUINFO
 #define CONFIG_DISPLAY_BOARDINFO
