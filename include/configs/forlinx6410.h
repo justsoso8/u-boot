@@ -52,14 +52,19 @@
  * Hardware drivers
  */
 #define CONFIG_DRIVER_DM9000		1
-#define CONFIG_DM9000_BASE		0x18800300
+/*
+ * CSN1 for CS#
+ * ADDR2 for CMD
+ * so any address between 0x18000000 and 1F0000000 is OK
+ */
+#define CONFIG_DM9000_BASE		0x18000000
 #define DM9000_IO			CONFIG_DM9000_BASE
 #define DM9000_DATA			(CONFIG_DM9000_BASE+4)
 
 /*
  * select serial console configuration
  */
-#define CONFIG_SERIAL1          1	/* we use SERIAL 1 on SMDK6400	*/
+#define CONFIG_SERIAL1          1	/* we use SERIAL 1 on FORLINX6410 */
 
 #define CONFIG_SYS_HUSH_PARSER			/* use "hush" command parser	*/
 #ifdef CONFIG_SYS_HUSH_PARSER
