@@ -723,7 +723,7 @@ forlinx6410_config	:	unconfig
 	else										\
 		echo "RAM_TEXT = 0xc7e00000" >> $(obj)board/forlinx6410/config.tmp;\
 	fi
-	#$(MKCONFIG) config arch cpu board vendor soc
+#@$(MKCONFIG) config arch cpu board vendor soc
 	@$(MKCONFIG) forlinx6410 arm arm1176 - - s3c64xx
 	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
 #########################################################################
