@@ -5,7 +5,7 @@
  * High Level Configuration Options
  * (easy to change)
  */
-#define CONFIG_S3C6400		1	/* in a SAMSUNG S3C6400 SoC     */
+#define CONFIG_S3C6410		1	/* in a SAMSUNG S3C6410 SoC     */
 #define CONFIG_S3C64XX		1	/* in a SAMSUNG S3C64XX Family  */
 #define CONFIG_FORLINX6410	1
 
@@ -20,7 +20,7 @@
 
 #define CONFIG_SYS_SDRAM_BASE	0x50000000
 
-/* input clock of PLL: SMDK6400 has 12MHz input clock */
+/* input clock of PLL: FORLINX6410 has 12MHz crystal */
 #define CONFIG_SYS_CLK_FREQ	12000000
 
 #if !defined(CONFIG_NAND_SPL) && (CONFIG_SYS_TEXT_BASE >= 0xc0000000)
@@ -89,9 +89,6 @@
 #define CONFIG_CMD_LOADB
 #define CONFIG_CMD_SAVEENV
 #define CONFIG_CMD_NAND
-#if defined(CONFIG_BOOT_ONENAND)
-#define CONFIG_CMD_ONENAND
-#endif
 #define CONFIG_CMD_PING
 #define CONFIG_CMD_ELF
 #define CONFIG_CMD_FAT
@@ -152,10 +149,9 @@
 #define CONFIG_SYNC_MODE
 */
 
-/* SMDK6400 has 2 banks of DRAM, but we use only one in U-Boot */
 #define CONFIG_NR_DRAM_BANKS	1
 #define PHYS_SDRAM_1		CONFIG_SYS_SDRAM_BASE	/* SDRAM Bank #1	*/
-#define PHYS_SDRAM_1_SIZE	0x08000000	/* 128 MB in Bank #1	*/
+#define PHYS_SDRAM_1_SIZE	0x10000000	/* 256 MB in Bank #1	*/
 
 #define CONFIG_SYS_FLASH_BASE		0x10000000
 #define CONFIG_SYS_MONITOR_BASE	0x00000000
@@ -273,7 +269,7 @@
 #define CONFIG_USB_S3C64XX
 #define CONFIG_USB_OHCI_NEW		1
 #define CONFIG_SYS_USB_OHCI_REGS_BASE		0x74300000
-#define CONFIG_SYS_USB_OHCI_SLOT_NAME		"s3c6400"
+#define CONFIG_SYS_USB_OHCI_SLOT_NAME		"s3c6410"
 #define CONFIG_SYS_USB_OHCI_MAX_ROOT_PORTS	3
 #define CONFIG_SYS_USB_OHCI_CPU_INIT		1
 
