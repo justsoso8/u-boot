@@ -5,7 +5,7 @@
  * High Level Configuration Options
  * (easy to change)
  */
-#define CONFIG_S3C6400		1	/* in a SAMSUNG S3C6400 SoC     */
+#define CONFIG_S3C6410		1	/* in a SAMSUNG S3C6410 SoC     */
 #define CONFIG_S3C64XX		1	/* in a SAMSUNG S3C64XX Family  */
 #define CONFIG_FORLINX6410	1
 
@@ -269,7 +269,7 @@
 #define CONFIG_USB_S3C64XX
 #define CONFIG_USB_OHCI_NEW		1
 #define CONFIG_SYS_USB_OHCI_REGS_BASE		0x74300000
-#define CONFIG_SYS_USB_OHCI_SLOT_NAME		"s3c6400"
+#define CONFIG_SYS_USB_OHCI_SLOT_NAME		"s3c6410"
 #define CONFIG_SYS_USB_OHCI_MAX_ROOT_PORTS	3
 #define CONFIG_SYS_USB_OHCI_CPU_INIT		1
 
