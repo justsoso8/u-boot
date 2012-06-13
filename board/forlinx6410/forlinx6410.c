@@ -94,7 +94,7 @@ int dram_init(void)
 #ifdef CONFIG_DISPLAY_BOARDINFO
 int checkboard(void)
 {
-	printf("Board:   SMDK6400\n");
+	printf("Board:   FORLINX6410\n");
 	return 0;
 }
 #endif
@@ -111,23 +111,12 @@ ulong virt_to_phy_smdk6400(ulong addr)
 }
 #endif
 
-ulong board_flash_get_legacy (ulong base, int banknum, flash_info_t *info)
-{
-	if (banknum == 0) {	/* non-CFI boot flash */
-		info->portwidth = FLASH_CFI_16BIT;
-		info->chipwidth = FLASH_CFI_BY16;
-		info->interface = FLASH_CFI_X16;
-		return 1;
-	} else
-		return 0;
-}
-
 #ifdef CONFIG_CMD_NET
 int board_eth_init(bd_t *bis)
 {
 	int rc = 0;
-#ifdef CONFIG_CS8900
-	rc = cs8900_initialize(0, CONFIG_CS8900_BASE);
+#ifdef CONFIG_DRIVER_DM9000
+	rc = dm9000_initialize(bis);
 #endif
 	return rc;
 }
