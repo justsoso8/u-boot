@@ -681,53 +681,14 @@ $(obj).boards.depend:	boards.cfg
 lcname	= $(shell echo $(1) | sed -e 's/\(.*\)_config/\L\1/')
 ucname	= $(shell echo $(1) | sed -e 's/\(.*\)_config/\U\1/')
 
-#========================================================================
-# ARM
-#========================================================================
-
-SX1_stdout_serial_config \
-SX1_config:		unconfig
-	@mkdir -p $(obj)include
-	@if [ "$(findstring _stdout_serial_, $@)" ] ; then \
-		echo "#undef CONFIG_STDOUT_USBTTY" >> $(obj)include/config.h ; \
-	else \
-		echo "#define CONFIG_STDOUT_USBTTY" >> $(obj)include/config.h ; \
-	fi;
-	@$(MKCONFIG) -n $@ SX1 arm arm925t sx1
-
-#########################################################################
-## ARM1176 Systems
-#########################################################################
-smdk6400_noUSB_config	\
-smdk6400_config	:	unconfig
-	@mkdir -p $(obj)include $(obj)board/samsung/smdk6400
-	@mkdir -p $(obj)nand_spl/board/samsung/smdk6400
-	@echo "#define CONFIG_NAND_U_BOOT" > $(obj)include/config.h
-	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
-	@if [ -z "$(findstring smdk6400_noUSB_config,$@)" ]; then			\
-		echo "RAM_TEXT = 0x57e00000" >> $(obj)board/samsung/smdk6400/config.tmp;\
-	else										\
-		echo "RAM_TEXT = 0xc7e00000" >> $(obj)board/samsung/smdk6400/config.tmp;\
-	fi
-	@$(MKCONFIG) smdk6400 arm arm1176 smdk6400 samsung s3c64xx
-	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
-
-forlinx6410_noUSB_config	\
 forlinx6410_config	:	unconfig
 	@mkdir -p $(obj)include $(obj)board/forlinx6410
 	@mkdir -p $(obj)nand_spl/board/forlinx6410
-	@echo "#define CONFIG_NAND_U_BOOT" > $(obj)include/config.h
-	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
-	@if [ -z "$(findstring forlinx6410_noUSB,$@)" ]; then			\
-		echo "RAM_TEXT = 0x57e00000" >> $(obj)board/forlinx6410/config.tmp;\
-	else										\
-		echo "RAM_TEXT = 0xc7e00000" >> $(obj)board/forlinx6410/config.tmp;\
-	fi
-#@$(MKCONFIG) config arch cpu board vendor soc
+#@$(MKCONFIG) Target  Architecture  CPU  Board [VENDOR] [SOC]
 	@$(MKCONFIG) forlinx6410 arm arm1176 - - s3c64xx
 	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
-#########################################################################
-#########################################################################
+	@echo "CROSS_COMPILE = arm-eabi-" >> $(obj)include/config.mk
+	@echo "RAM_TEXT = 0xc7e00000" >> $(obj)board/forlinx6410/config.tmp
 
 clean:
 	@rm -f $(obj)examples/standalone/82559_eeprom			  \
