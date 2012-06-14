@@ -802,16 +802,14 @@
 	(STARTUP_PDIV << 8) | STARTUP_SDIV)
 #define STARTUP_APLL	(((CONFIG_SYS_CLK_FREQ >> STARTUP_SDIV) / \
 	STARTUP_PDIV) * STARTUP_MDIV)
-#define STARTUP_HCLK	(STARTUP_MPLL / (STARTUP_HCLKX2DIV + 1) / \
-	(STARTUP_HCLKDIV + 1))
 #else
 #define APLL_VAL	((1 << 31) | (STARTUP_AMDIV << 16) | \
 	(STARTUP_PDIV << 8) | STARTUP_SDIV)
 #define STARTUP_APLL	(((CONFIG_SYS_CLK_FREQ >> STARTUP_SDIV) / \
 	STARTUP_PDIV) * STARTUP_AMDIV)
+#endif
 #define STARTUP_HCLK	(STARTUP_MPLL / (STARTUP_HCLKX2DIV + 1) / \
 	(STARTUP_HCLKDIV + 1))
-#endif
 
 
 /*-----------------------------------------------------------------------
