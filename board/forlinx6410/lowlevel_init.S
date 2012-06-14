@@ -34,7 +34,7 @@
 #include <config.h>
 #include <version.h>
 
-#include <asm/arch/s3c6400.h>
+#include <asm/arch/s3c6410.h>
 
 #ifdef CONFIG_SERIAL1
 #define ELFIN_UART_CONSOLE_BASE (ELFIN_UART_BASE + ELFIN_UART0_OFFSET)

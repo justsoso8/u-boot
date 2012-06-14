@@ -766,11 +766,11 @@
 #define STARTUP_AMDIV		400
 #define STARTUP_APDIV		3
 #define STARTUP_ASDIV		2
-#if defined(CONFIG_ACLK_533)
+#elif defined(CONFIG_ACLK_533)
 #define STARTUP_AMDIV		266
 #define STARTUP_APDIV		3
 #define STARTUP_ASDIV		1
-#if defined(CONFIG_ACLK_667)
+#elif defined(CONFIG_ACLK_667)
 #define STARTUP_AMDIV		333
 #define STARTUP_APDIV		3
 #define STARTUP_ASDIV		1

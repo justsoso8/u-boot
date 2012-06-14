@@ -130,7 +130,7 @@
  */
 #define CONFIG_STACKSIZE	0x40000		/* regular stack 256KB */
 
-#define CONFIG_CLK_667
+#define CONFIG_ACLK_667
 
 #define CONFIG_NR_DRAM_BANKS	1
 #define PHYS_SDRAM_1		CONFIG_SYS_SDRAM_BASE	/* SDRAM Bank #1	*/
