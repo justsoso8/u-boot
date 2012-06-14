@@ -146,14 +146,6 @@
 /* AM29LV160B has 35 sectors, AM29LV800B - 19 */
 #define CONFIG_SYS_MAX_FLASH_SECT	40
 
-#define CONFIG_AMD_LV800
-#define CONFIG_SYS_FLASH_CFI		1	/* Use CFI parameters (needed?) */
-/* Use drivers/cfi_flash.c, even though the flash is not CFI-compliant	*/
-#define CONFIG_FLASH_CFI_DRIVER	1
-#define CONFIG_SYS_FLASH_CFI_WIDTH	FLASH_CFI_16BIT
-#define CONFIG_FLASH_CFI_LEGACY
-#define CONFIG_SYS_FLASH_LEGACY_512Kx16
-
 /* timeout values are in ticks */
 #define CONFIG_SYS_FLASH_ERASE_TOUT	(5 * CONFIG_SYS_HZ) /* Timeout for Flash Erase	*/
 #define CONFIG_SYS_FLASH_WRITE_TOUT	(5 * CONFIG_SYS_HZ) /* Timeout for Flash Write	*/
