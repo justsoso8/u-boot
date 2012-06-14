@@ -130,24 +130,7 @@
  */
 #define CONFIG_STACKSIZE	0x40000		/* regular stack 256KB */
 
-/**********************************
- Support Clock Settings
- **********************************
- Setting	SYNC	ASYNC
- ----------------------------------
- 667_133_66	 X	  O
- 533_133_66	 O	  O
- 400_133_66	 X	  O
- 400_100_50	 O	  O
- **********************************/
-
-/*#define CONFIG_CLK_667_133_66*/
-#define CONFIG_CLK_533_133_66
-/*
-#define CONFIG_CLK_400_100_50
-#define CONFIG_CLK_400_133_66
-#define CONFIG_SYNC_MODE
-*/
+#define CONFIG_CLK_667
 
 #define CONFIG_NR_DRAM_BANKS	1
 #define PHYS_SDRAM_1		CONFIG_SYS_SDRAM_BASE	/* SDRAM Bank #1	*/
