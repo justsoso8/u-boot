@@ -51,27 +51,28 @@ _TEXT_BASE:
 lowlevel_init:
 	mov	r12, lr
 
-	/* LED on only #8 */
-	ldr	r0, =ELFIN_GPIO_BASE
-	ldr	r1, =0x55540000
-	str	r1, [r0, #GPNCON_OFFSET]
-
-	ldr	r1, =0x55555555
-	str	r1, [r0, #GPNPUD_OFFSET]
-
-	ldr	r1, =0xf000
-	str	r1, [r0, #GPNDAT_OFFSET]
+/* 
+ * GPM[0:3] connect to LED[0:3], set to 0 to light the LED
+ * GPM[4:5] connected to the back plane, but no use
+ */
+	ldr	r0, =ELFIN_GPIO_BASE  
+	ldr	r1, =0x00001111
+	str	r1, [r0, #GPMCON_OFFSET]
+	ldr	r1, =0x00000055
+	str	r1, [r0, #GPMPUD_OFFSET]
+	/* light all 4 LEDs */
+	ldr	r1, =0x0000
+	str	r1, [r0, #GPMDAT_OFFSET]
 
 	/* Disable Watchdog */
-	ldr	r0, =0x7e000000		@0x7e004000
-	orr	r0, r0, #0x4000
+	ldr	r0, =ELFIN_WATCHDOG_BASE
 	mov	r1, #0
-	str	r1, [r0]
+	str	r1, [r0, #WTCON_OFFSET]
 
 	/* External interrupt pending clear */
-	ldr	r0, =(ELFIN_GPIO_BASE+EINTPEND_OFFSET)	/*EINTPEND*/
+	ldr	r0, =ELFIN_GPIO_BASE
 	ldr	r1, [r0]
-	str	r1, [r0]
+	str	r1, [r0, #EINTPEND_OFFSET]
 
 	ldr	r0, =ELFIN_VIC0_BASE_ADDR	@0x71200000
 	ldr	r1, =ELFIN_VIC1_BASE_ADDR	@0x71300000
@@ -99,7 +100,7 @@ lowlevel_init:
 	bl uart_asm_init
 #endif
 
-#ifdef CONFIG_BOOT_NAND
+#if defined(CONFIG_BOOT_NAND)
 	/* simple init for NAND */
 	bl nand_asm_init
 #endif
@@ -265,7 +266,7 @@ uart_asm_init:
 
 #ifdef CONFIG_BOOT_NAND
 /*
- * NAND Interface init for SMDK6400
+ * NAND Interface init for SMDK6410
  */
 nand_asm_init:
 	ldr	r0, =ELFIN_NAND_BASE
