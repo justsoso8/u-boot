@@ -645,10 +645,14 @@
  * Watchdog timer
  */
 #define ELFIN_WATCHDOG_BASE	0x7E004000
-
-#define WTCON_REG		__REG(0x7E004004)
-#define WTDAT_REG		__REG(0x7E004008)
-#define WTCNT_REG		__REG(0x7E00400C)
+#define WTCON_OFFSET    0x00
+#define WTDAT_OFFSET    0x04
+#define WTCNT_OFFSET    0x08
+#define WTCLRINT_OFFSET 0x0C
+#define WTCON_REG		__REG(0x7E004000)
+#define WTDAT_REG		__REG(0x7E004004)
+#define WTCNT_REG		__REG(0x7E004008)
+#define WTCLRINT_REG	__REG(0x7E00400C)
 
 
 /*
