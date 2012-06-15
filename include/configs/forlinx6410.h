@@ -199,10 +199,10 @@
 
 /* NAND chip page size		*/
 #define CONFIG_SYS_NAND_PAGE_SIZE	2048
-/* NAND chip block size		*/
-#define CONFIG_SYS_NAND_BLOCK_SIZE	(128 * 1024)
 /* NAND chip page per block count  */
-#define CONFIG_SYS_NAND_PAGE_COUNT	64
+#define CONFIG_SYS_NAND_PAGE_COUNT	128
+/* NAND chip block size		*/
+#define CONFIG_SYS_NAND_BLOCK_SIZE	(CONFIG_SYS_NAND_PAGE_SIZE * CONFIG_SYS_NAND_PAGE_COUNT)
 /* Location of the bad-block label */
 #define CONFIG_SYS_NAND_BAD_BLOCK_POS	0
 /* Extra address cycle for > 128MiB */
