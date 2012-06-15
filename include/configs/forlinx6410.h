@@ -23,9 +23,7 @@
 /* input clock of PLL: FORLINX6410 has 12MHz crystal */
 #define CONFIG_SYS_CLK_FREQ	12000000
 
-#if !defined(CONFIG_NAND_SPL) && (CONFIG_SYS_TEXT_BASE >= 0xc0000000)
-#define CONFIG_ENABLE_MMU
-#endif
+#define CONFIG_NAND_SPL
 
 #define CONFIG_SETUP_MEMORY_TAGS
 #define CONFIG_CMDLINE_TAG
@@ -55,7 +53,7 @@
 /*
  * CSN1 for CS#
  * ADDR2 for CMD
- * so any address between 0x18000000 and 1F0000000 is OK
+ * so any address between 0x18000000 and 1FFFFFFF is OK
  */
 #define CONFIG_DM9000_BASE		0x18000000
 #define DM9000_IO			CONFIG_DM9000_BASE
@@ -123,6 +121,8 @@
 /* valid baudrates */
 #define CONFIG_SYS_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200 }
 
+#define CONFIG_SYS_NO_FLASH
+#undef CONFIG_CMD_BOOTM
 /*-----------------------------------------------------------------------
  * Stack sizes
  *
