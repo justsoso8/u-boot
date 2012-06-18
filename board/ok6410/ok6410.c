@@ -34,15 +34,6 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-/* ------------------------------------------------------------------------- */
-#define CS8900_Tacs	0x0	/* 0clk		address set-up		*/
-#define CS8900_Tcos	0x4	/* 4clk		chip selection set-up	*/
-#define CS8900_Tacc	0xE	/* 14clk	access cycle		*/
-#define CS8900_Tcoh	0x1	/* 1clk		chip selection hold	*/
-#define CS8900_Tah	0x4	/* 4clk		address holding time	*/
-#define CS8900_Tacp	0x6	/* 6clk		page mode access cycle	*/
-#define CS8900_PMC	0x0	/* normal(1data)page mode configuration	*/
-
 static inline void delay(unsigned long loops)
 {
 	__asm__ volatile ("1:\n" "subs %0, %1, #1\n"
@@ -54,23 +45,11 @@ static inline void delay(unsigned long loops)
  * Miscellaneous platform dependent initialisations
  */
 
-static void cs8900_pre_init(void)
-{
-	SROM_BW_REG &= ~(0xf << 4);
-	SROM_BW_REG |= (1 << 7) | (1 << 6) | (1 << 4);
-	SROM_BC1_REG = ((CS8900_Tacs << 28) + (CS8900_Tcos << 24) +
-			(CS8900_Tacc << 16) + (CS8900_Tcoh << 12) +
-			(CS8900_Tah << 8) + (CS8900_Tacp << 4) + CS8900_PMC);
-}
-
 int board_init(void)
 {
-	cs8900_pre_init();
+	s3c64xx_gpio * const gpio = (s3c64xx_gpio *)(ELFIN_GPIO_BASE);
 
-	/* NOR-flash in SROM0 */
 
-	/* Enable WAIT */
-	SROM_BW_REG |= 4 | 8 | 1;
 
 	gd->bd->bi_boot_params = PHYS_SDRAM_1 + 0x100;
 
@@ -100,7 +79,7 @@ int checkboard(void)
 #endif
 
 #ifdef CONFIG_ENABLE_MMU
-ulong virt_to_phy_smdk6400(ulong addr)
+ulong virt_to_phy_ok6410(ulong addr)
 {
 	if ((0xc0000000 <= addr) && (addr < 0xc8000000))
 		return addr - 0xc0000000 + 0x50000000;
@@ -115,7 +94,7 @@ ulong virt_to_phy_smdk6400(ulong addr)
 int board_eth_init(bd_t *bis)
 {
 	int rc = 0;
-#ifdef CONFIG_DRIVER_DM9000
+#if defined(CONFIG_DRIVER_DM9000)
 	rc = dm9000_initialize(bis);
 #endif
 	return rc;

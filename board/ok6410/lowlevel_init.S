@@ -185,7 +185,7 @@ check_syncack:
 	 * This was unconditional in original Samsung sources, but it doesn't
 	 * seem to make much sense on S3C6400.
 	 */
-#ifndef CONFIG_S3C6400
+#ifndef CONFIG_S3C6410
 	ldr	r1, [r0, #OTHERS_OFFSET]
 	bic	r1, r1, #0xC0
 	orr	r1, r1, #0x40
@@ -243,7 +243,7 @@ wait_for_async:
 	ldr	r1, [r0, #OTHERS_OFFSET]
 	orr	r1, r1, #0x20
 	str	r1, [r0, #OTHERS_OFFSET]
-#elif !defined(CONFIG_S3C6400)
+#elif !defined(CONFIG_S3C6410)
 	/* According to 661558um_S3C6400X_rev10.pdf 0x20 is reserved */
 	ldr	r1, [r0, #OTHERS_OFFSET]
 	bic	r1, r1, #0x20
@@ -284,7 +284,7 @@ nand_asm_init:
 
 #ifdef CONFIG_ENABLE_MMU
 /*
- * MMU Table for SMDK6400
+ * MMU Table for OK6410
  */
 
 	/* form a first-level section entry */
