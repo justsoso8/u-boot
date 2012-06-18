@@ -23,8 +23,6 @@
 /* input clock of PLL: OK6410 has 12MHz crystal */
 #define CONFIG_SYS_CLK_FREQ	12000000
 
-#define CONFIG_NAND_SPL
-
 #define CONFIG_SETUP_MEMORY_TAGS
 #define CONFIG_CMDLINE_TAG
 #define CONFIG_INITRD_TAG
@@ -92,6 +90,8 @@
 #define CONFIG_CMD_FAT
 #define CONFIG_CMD_EXT2
 
+#undef CONFIG_CMD_IMLS
+
 #define CONFIG_BOOTDELAY	3
 
 #define CONFIG_ZERO_BOOTDELAY_CHECK
@@ -122,7 +122,7 @@
 #define CONFIG_SYS_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200 }
 
 #define CONFIG_SYS_NO_FLASH
-#undef CONFIG_CMD_BOOTM
+//#undef CONFIG_CMD_BOOTM
 /*-----------------------------------------------------------------------
  * Stack sizes
  *

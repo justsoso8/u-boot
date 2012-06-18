@@ -23,7 +23,11 @@
 
 #include <common.h>
 
+#if defined(CONFIG_S3C6400)
 #include <asm/arch/s3c6400.h>
+#elif defined(CONFIG_S3C6410)
+#include <asm/arch/s3c6410.h>
+#endif
 
 DECLARE_GLOBAL_DATA_PTR;
 
