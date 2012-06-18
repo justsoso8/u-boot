@@ -1,5 +1,5 @@
 cpu_init.S
-forlinx6410_nand_spl.c
+ok6410_nand_spl.c
 lowlevel_init.S
 nand_base.c
 nand_boot.c
