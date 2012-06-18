@@ -146,6 +146,7 @@ SUBDIRS = $(SUBDIR_TOOLS)
 .PHONY : $(SUBDIRS) $(VERSION_FILE) $(TIMESTAMP_FILE)
 
 ifeq ($(obj)include/config.mk,$(wildcard $(obj)include/config.mk))
+# config.mk exist, means it has been configed
 
 # Include autoconf.mk before config.mk so that the config options are available
 # to all top level build files.  We need the dummy all: target to prevent the
@@ -712,6 +713,14 @@ smdk6400_config	:	unconfig
 	@$(MKCONFIG) smdk6400 arm arm1176 smdk6400 samsung s3c64xx
 	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
 
+ok6410_config:	unconfig
+	@mkdir -p $(obj)include $(obj)board/ok6410
+	@mkdir -p $(obj)nand_spl/board/ok6410
+#@$(MKCONFIG) Target Architecture CPU Board [VENDOR] [SOC]
+	@$(MKCONFIG) ok6410 arm arm1176 - - s3c64xx
+	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
+	@echo "CROSS_COMPILE = arm-eabi-" >> $(obj)include/config.mk
+	@echo "RAM_TEXT = 0xc7e00000" >> $(obj)board/forlinx6410/config.tmp
 #########################################################################
 #########################################################################
 

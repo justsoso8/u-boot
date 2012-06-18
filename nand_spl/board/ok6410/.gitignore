@@ -1,0 +1,8 @@
+cpu_init.S
+forlinx6410_nand_spl.c
+lowlevel_init.S
+nand_base.c
+nand_boot.c
+nand_ecc.c
+s3c64xx.c
+start.S

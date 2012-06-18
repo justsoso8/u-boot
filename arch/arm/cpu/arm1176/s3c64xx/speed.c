@@ -31,7 +31,11 @@
  */
 
 #include <common.h>
+#if defined(CONFIG_S3C6400)
 #include <asm/arch/s3c6400.h>
+#elif defined(CONFIG_S3C6410)
+#include <asm/arch/s3c6410.h>
+#endif
 
 #define APLL 0
 #define MPLL 1
@@ -132,7 +136,7 @@ ulong get_UCLK(void)
 
 int print_cpuinfo(void)
 {
-	printf("\nCPU:     S3C6400@%luMHz\n", get_ARMCLK() / 1000000);
+	printf("\nCPU:     S3C64xx@%luMHz\n", get_ARMCLK() / 1000000);
 	printf("         Fclk = %luMHz, Hclk = %luMHz, Pclk = %luMHz ",
 	       get_FCLK() / 1000000, get_HCLK() / 1000000,
 	       get_PCLK() / 1000000);
