@@ -45,7 +45,7 @@ OBJS	:= $(addprefix $(obj),$(SOBJS) $(COBJS))
 __OBJS	:= $(SOBJS) $(COBJS)
 LNDIR	:= $(nandobj)board/$(BOARDDIR)
 
-ALL	= $(nandobj)u-boot-spl $(nandobj)u-boot-spl.bin $(nandobj)u-boot-spl-16k.bin
+ALL	= $(nandobj)u-boot-spl $(nandobj)u-boot-spl.dis $(nandobj)u-boot-spl.bin $(nandobj)u-boot-spl-16k.bin
 
 all:	$(obj).depend $(ALL)
 
@@ -62,6 +62,9 @@ $(nandobj)u-boot-spl:	$(OBJS) $(nandobj)u-boot.lds
 
 $(nandobj)u-boot.lds: $(LDSCRIPT)
 	$(CPP) $(CPPFLAGS) $(LDPPFLAGS) -ansi -D__ASSEMBLY__ -P - <$^ >$@
+
+$(nandobj)u-boot-spl.dis:	$(nandobj)u-boot-spl
+		$(OBJDUMP) -d $< > $@
 
 # create symbolic links for common files
 
