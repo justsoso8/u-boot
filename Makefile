@@ -379,6 +379,7 @@ ALL-y += $(obj)u-boot.srec $(obj)u-boot.bin $(obj)System.map
 ALL-$(CONFIG_NAND_U_BOOT) += $(obj)u-boot-nand.bin
 ALL-$(CONFIG_ONENAND_U_BOOT) += $(obj)u-boot-onenand.bin
 ONENAND_BIN ?= $(obj)onenand_ipl/onenand-ipl-2k.bin
+#ALL-$(CONFIG_MMC_U_BOOT) += $(obj)u-boot-mmc.bin
 ALL-$(CONFIG_SPL) += $(obj)spl/u-boot-spl.bin
 ALL-$(CONFIG_OF_SEPARATE) += $(obj)u-boot.dtb $(obj)u-boot-dtb.bin
 
@@ -513,6 +514,14 @@ onenand_ipl:	$(TIMESTAMP_FILE) $(VERSION_FILE) $(obj)include/autoconf.mk
 
 $(obj)u-boot-onenand.bin:	onenand_ipl $(obj)u-boot.bin
 		cat $(ONENAND_BIN) $(obj)u-boot.bin > $(obj)u-boot-onenand.bin
+
+mmc_spl:	$(TIMESTAMP_FILE) $(VERSION_FILE) depend
+		$(MAKE) -C mmc_spl/board/$(BOARDDIR) all
+
+$(obj)u-boot-mmc.bin:	mmc_spl
+ifdef CONFIG_BOOT_AUTODETECT
+		cat $(obj)mmc_spl/u-boot-spl-16k.bin $(obj)u-boot.bin > $(obj)u-boot-mmc.bin
+endif
 
 $(obj)spl/u-boot-spl.bin:	$(SUBDIR_TOOLS) depend
 		$(MAKE) -C spl all
@@ -716,6 +725,7 @@ smdk6400_config	:	unconfig
 ok6410_config:	unconfig
 	@mkdir -p $(obj)include $(obj)board/ok6410
 	@mkdir -p $(obj)nand_spl/board/ok6410
+	@mkdir -p $(obj)mmc_spl/board/ok6410
 #@$(MKCONFIG) Target Architecture CPU Board [VENDOR] [SOC]
 	@$(MKCONFIG) ok6410 arm arm1176 - - s3c64xx
 	@echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk

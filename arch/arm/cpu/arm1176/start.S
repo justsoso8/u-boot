@@ -51,7 +51,7 @@
 
 .globl _start
 _start: b	reset
-#ifndef CONFIG_NAND_SPL
+#if !(defined(CONFIG_NAND_SPL) || defined(CONFIG_MMC_SPL))
 	ldr	pc, _undefined_instruction
 	ldr	pc, _software_interrupt
 	ldr	pc, _prefetch_abort
@@ -164,7 +164,7 @@ cpu_init_crit:
 	 * When booting from NAND - it has definitely been a reset, so, no need
 	 * to flush caches and disable the MMU
 	 */
-#ifndef CONFIG_NAND_SPL
+#if !(defined(CONFIG_NAND_SPL) || defined(CONFIG_MMC_SPL))
 	/*
 	 * flush v4 I/D caches
 	 */
@@ -356,7 +356,7 @@ clbss_l:str	r2, [r0]		/* clear loop...		    */
 	cmp	r0, r1
 	bne	clbss_l
 
-#ifndef CONFIG_NAND_SPL
+#if !(defined(CONFIG_NAND_SPL) || defined(CONFIG_MMC_SPL))
 	bl coloured_LED_init
 	bl red_led_on
 #endif
@@ -397,7 +397,7 @@ _mmu_table_base:
 	.word mmu_table
 #endif
 
-#ifndef CONFIG_NAND_SPL
+#if !(defined(CONFIG_NAND_SPL) || defined(CONFIG_MMC_SPL))
 /*
  * we assume that cache operation is done before. (eg. cleanup_before_linux())
  * actually, we don't need to do anything about cache if not use d-cache in
@@ -575,4 +575,4 @@ fiq:
 	get_bad_stack
 	bad_save_user_regs
 	bl	do_fiq
-#endif /* CONFIG_NAND_SPL */
+#endif /* CONFIG_NAND_SPL || CONFIG_MMC_SPL */
