@@ -395,8 +395,7 @@ boot_from_irom:
 	ldr	r2, =0x0000ff7f
 	str	r2, [r1, #GPKDAT_OFFSET_8BIT]
 #endif
-	ldr     pc, _mmc_boot_copy
-_mmc_boot_copy: .word mmc_boot_copy
+	b mmc_boot_copy
 #endif
 
 #if (defined(CONFIG_NAND_SPL) || defined(CONFIG_BOOT_AUTODETECT))
@@ -413,8 +412,7 @@ boot_from_nand:
 	ldr	r2, =0x0000ffff
 	str	r2, [r1, #GPKDAT_OFFSET_8BIT]
 #endif
-	ldr     pc, _nand_boot
-_nand_boot: .word nand_boot
+	b nand_boot
 #endif
 #else
 	ldr	r0, _board_init_r_ofs
