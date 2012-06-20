@@ -228,6 +228,7 @@ skip_tcmdisable:
 call_board_init_f:
 	ldr	sp, =(CONFIG_SYS_INIT_SP_ADDR)
 	bic	sp, sp, #7 /* 8-byte alignment for ABI compliance */
+#if !(defined(CONFIG_NAND_SPL) || defined(CONFIG_MMC_SPL))
 	ldr	r0,=0x00000000
 	bl	board_init_f
 
@@ -302,6 +303,7 @@ fixnext:
 	add	r2, r2, #8		/* each rel.dyn entry is 8 bytes */
 	cmp	r2, r3
 	blo	fixloop
+#endif
 #endif
 
 #ifdef CONFIG_ENABLE_MMU

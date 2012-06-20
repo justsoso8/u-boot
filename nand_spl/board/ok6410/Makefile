@@ -39,7 +39,7 @@ CFLAGS	+= -DCONFIG_NAND_SPL -ffunction-sections
 
 SOBJS	= start.o cpu_init.o lowlevel_init.o
 COBJS	= nand_boot.o nand_ecc.o s3c64xx.o nand_base.o
-#COBJS	= nand_boot.o nand_ecc.o s3c64xx.o ok6410_nand_spl.o nand_base.o
+#COBJS	= nand_boot.o nand_ecc.o s3c64xx.o nand_base.o
 
 SRCS	:= $(addprefix $(obj),$(SOBJS:.o=.S) $(COBJS:.o=.c))
 OBJS	:= $(addprefix $(obj),$(SOBJS) $(COBJS))
@@ -97,10 +97,6 @@ $(obj)nand_ecc.c:
 $(obj)s3c64xx.c:
 	@rm -f $@
 	@ln -s $(TOPDIR)/drivers/mtd/nand/s3c64xx.c $@
-
-$(obj)ok6410_nand_spl.c:
-	@rm -f $@
-	@ln -s $(TOPDIR)/board/ok6410/ok6410_nand_spl.c $@
 
 $(obj)nand_base.c:
 	@rm -f $@
