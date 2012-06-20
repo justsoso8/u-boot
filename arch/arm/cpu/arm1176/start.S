@@ -378,7 +378,7 @@ clbss_l:str	r2, [r0]		/* clear loop...		    */
 	and	r1, r0, r1			/*r1 = MEM_CFG_STAT & CFG_BOOT_LOC */
 
 	cmp	r1, #0x60		/*Internal ROM*/
-	beq	boot_from_irom
+	//beq	boot_from_irom
 	cmp	r1, #0x00		/*Stepping Stone area in NFCON*/
 	beq	boot_from_nand
 	b	reset
