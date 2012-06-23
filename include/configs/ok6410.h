@@ -197,8 +197,9 @@
 #define CONFIG_SYS_NAND_U_BOOT_OFFS	(4 * 1024)	/* Offset to RAM U-Boot image */
 #define CONFIG_SYS_NAND_U_BOOT_SIZE	(252 * 1024)	/* Size of RAM U-Boot image   */
 
-/* NAND chip page size		*/
-#define CONFIG_SYS_NAND_PAGE_SIZE	2048
+// KAGAG08U0D
+/* NAND chip page size */
+#define CONFIG_SYS_NAND_PAGE_SIZE	4096
 /* NAND chip page per block count  */
 #define CONFIG_SYS_NAND_PAGE_COUNT	128
 /* NAND chip block size		*/
@@ -208,12 +209,32 @@
 /* Extra address cycle for > 128MiB */
 #define CONFIG_SYS_NAND_5_ADDR_CYCLE
 
-/* Size of the block protected by one OOB (Spare Area in Samsung terminology) */
-#define CONFIG_SYS_NAND_ECCSIZE	CONFIG_SYS_NAND_PAGE_SIZE
-/* Number of ECC bytes per OOB - S3C6400 calculates 4 bytes ECC in 1-bit mode */
-#define CONFIG_SYS_NAND_ECCBYTES	4
 /* Size of a single OOB region */
-#define CONFIG_SYS_NAND_OOBSIZE	64
+#define CONFIG_SYS_NAND_OOBSIZE	218
+#define CONFIG_SYS_NAND_ECC_1BIT
+
+//#define CONFIG_SYS_NAND_ECC_4BIT
+//#define CONFIG_SYS_NAND_ECC_8BIT
+
+/* Number of ECC bytes per OOB, S3C6410 calculates
+ * 4 bytes ECC in 1-bit mode for (up to) 2048 bytes
+ * 7 bytes ECC in 4-bit mode for 512 bytes
+ * 13 bytes ECC in 8-bit mode for 512 bytes
+ */
+
+#define CONFIG_SYS_NAND_ECCSIZE	512
+
+#if defined(CONFIG_SYS_NAND_ECC_1BIT)
+#define CONFIG_SYS_NAND_ECCBYTES 4
+#else
+#if defined(CONFIG_SYS_NAND_ECC_4BIT)
+#define CONFIG_SYS_NAND_ECCBYTES 7
+#else
+#if defined(CONFIG_SYS_NAND_ECC_8BIT)
+#define CONFIG_SYS_NAND_ECCBYTES 13
+#endif
+#endif
+
 /* ECC byte positions */
 #define CONFIG_SYS_NAND_ECCPOS		{40, 41, 42, 43, 44, 45, 46, 47, \
 				 48, 49, 50, 51, 52, 53, 54, 55, \

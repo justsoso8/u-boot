@@ -1,9 +1,12 @@
 #
 # (C) Copyright 2006-2007
-# Stefan Roese, DENX Software Engineering, sr@denx.de.
+# Stefan Roese, DENX Software Engineering, sr at denx.de.
 #
 # (C) Copyright 2008
-# Guennadi Liakhovetki, DENX Software Engineering, <lg@denx.de>
+# Guennadi Liakhovetki, DENX Software Engineering, <lg at denx.de>
+#
+# (C) Copyright 2010
+# Alex Ling, <kasimling at gmail.com>
 #
 # See file CREDITS for list of people who contributed to this
 # project.
@@ -24,47 +27,54 @@
 # MA 02111-1307 USA
 #
 
-CONFIG_NAND_SPL	= y
+CONFIG_MMC_SPL	= y
+#CONFIG_BOOT_AUTODETECT = y
 
 include $(TOPDIR)/config.mk
-include $(TOPDIR)/nand_spl/board/$(BOARDDIR)/config.mk
+include $(TOPDIR)/mmc_spl/board/$(BOARDDIR)/config.mk
 
-nandobj	:= $(OBJTREE)/nand_spl/
+LDSCRIPT= $(TOPDIR)/mmc_spl/board/$(BOARDDIR)/u-boot.lds
+#LDFLAGS	= -Bstatic -T $(mmcobj)u-boot.lds -Ttext $(CONFIG_SYS_TEXT_BASE) $(PLATFORM_LDFLAGS)
+LDFLAGS := -T $(mmcobj)u-boot.lds -Ttext $(CONFIG_SYS_TEXT_BASE) $(LDFLAGS) \
+	   $(LDFLAGS_FINAL)
+AFLAGS	+= -DCONFIG_PRELOADER -DCONFIG_MMC_SPL
+CFLAGS	+= -DCONFIG_PRELOADER -DCONFIG_MMC_SPL
 
-LDSCRIPT= $(TOPDIR)/nand_spl/board/$(BOARDDIR)/u-boot.lds
-LDFLAGS := -T $(nandobj)u-boot.lds -Ttext $(CONFIG_SYS_TEXT_BASE) $(LDFLAGS) \
-		$(LDFLAGS_FINAL) -gc-sections
+mmcobj	:= $(OBJTREE)/mmc_spl/
+
+COBJS-$(CONFIG_MMC_SPL) += mmc_boot.o
+ifdef CONFIG_BOOT_AUTODETECT
+COBJS-y += nand_boot.o nand_ecc.o s3c64xx.o
+CONFIG_NAND_SPL	= y
 AFLAGS	+= -DCONFIG_NAND_SPL
-CFLAGS	+= -DCONFIG_NAND_SPL -ffunction-sections
+CFLAGS	+= -DCONFIG_NAND_SPL
+endif
 
 SOBJS	= start.o cpu_init.o lowlevel_init.o
-COBJS	= nand_boot.o nand_ecc.o s3c64xx.o nand_base.o
+COBJS	:= $(sort $(COBJS-y))
 
 SRCS	:= $(addprefix $(obj),$(SOBJS:.o=.S) $(COBJS:.o=.c))
 OBJS	:= $(addprefix $(obj),$(SOBJS) $(COBJS))
 __OBJS	:= $(SOBJS) $(COBJS)
-LNDIR	:= $(nandobj)board/$(BOARDDIR)
+LNDIR	:= $(mmcobj)board/$(BOARDDIR)
 
-ALL	= $(nandobj)u-boot-spl $(nandobj)u-boot-spl.dis $(nandobj)u-boot-spl.bin $(nandobj)u-boot-spl-16k.bin
+ALL	= $(mmcobj)u-boot-spl $(mmcobj)u-boot-spl.bin $(mmcobj)u-boot-spl-16k.bin
 
 all:	$(obj).depend $(ALL)
 
-$(nandobj)u-boot-spl-16k.bin: $(nandobj)u-boot-spl
+$(mmcobj)u-boot-spl-16k.bin: $(mmcobj)u-boot-spl
 	$(OBJCOPY) ${OBJCFLAGS} --pad-to=$(PAD_TO) -O binary $< $@
 
-$(nandobj)u-boot-spl.bin:	$(nandobj)u-boot-spl
+$(mmcobj)u-boot-spl.bin:	$(mmcobj)u-boot-spl
 	$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
 
-$(nandobj)u-boot-spl:	$(OBJS) $(nandobj)u-boot.lds
+$(mmcobj)u-boot-spl:	$(OBJS) $(mmcobj)u-boot.lds
 	cd $(LNDIR) && $(LD) $(LDFLAGS) $(__OBJS) \
-		-Map $(nandobj)u-boot-spl.map \
-		-o $(nandobj)u-boot-spl
+		-Map $(mmcobj)u-boot-spl.map \
+		-o $(mmcobj)u-boot-spl
 
-$(nandobj)u-boot.lds: $(LDSCRIPT)
+$(mmcobj)u-boot.lds: $(LDSCRIPT)
 	$(CPP) $(CPPFLAGS) $(LDPPFLAGS) -ansi -D__ASSEMBLY__ -P - <$^ >$@
-
-$(nandobj)u-boot-spl.dis:	$(nandobj)u-boot-spl
-		$(OBJDUMP) -d $< > $@
 
 # create symbolic links for common files
 
@@ -88,6 +98,13 @@ $(obj)nand_boot.c:
 	@rm -f $@
 	@ln -s $(TOPDIR)/nand_spl/nand_boot.c $@
 
+# from mmc_spl/board/samsung/mini6410 directory
+$(obj)mmc_boot.c:
+ifneq ($(OBJTREE),$(SRCTREE))
+	@rm -f $@
+	@ln -s $(TOPDIR)/mmc_spl/board/samsung/mini6410/mmc_boot.c $@
+endif
+
 # from drivers/mtd/nand directory
 $(obj)nand_ecc.c:
 	@rm -f $@
@@ -97,9 +114,6 @@ $(obj)s3c64xx.c:
 	@rm -f $@
 	@ln -s $(TOPDIR)/drivers/mtd/nand/s3c64xx.c $@
 
-$(obj)nand_base.c:
-	@rm -f $@
-	@ln -s $(TOPDIR)/drivers/mtd/nand/nand_base.c $@
 #########################################################################
 
 $(obj)%.o:	$(obj)%.S

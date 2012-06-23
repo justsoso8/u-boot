@@ -5,6 +5,9 @@
 # (C) Copyright 2008
 # Guennadi Liakhovetki, DENX Software Engineering, <lg@denx.de>
 #
+# (C) Copyright 2011
+# Chander Kashyap, Samsung Electronics, <k.chander@samsung.com>
+#
 # See file CREDITS for list of people who contributed to this
 # project.
 #
@@ -24,82 +27,68 @@
 # MA 02111-1307 USA
 #
 
-CONFIG_NAND_SPL	= y
+CONFIG_MMC_SPL	= y
 
 include $(TOPDIR)/config.mk
-include $(TOPDIR)/nand_spl/board/$(BOARDDIR)/config.mk
 
-nandobj	:= $(OBJTREE)/nand_spl/
+LDSCRIPT= $(TOPDIR)/mmc_spl/board/$(BOARDDIR)/u-boot.lds
+LDFLAGS	= -Bstatic -T $(mmcobj)u-boot.lds -Ttext $(CONFIG_SYS_TEXT_BASE) $(PLATFORM_LDFLAGS)
+AFLAGS	+= -DCONFIG_MMC_SPL
+CFLAGS	+= -DCONFIG_MMC_SPL
+CFLAGS	+= -DCONFIG_PRELOADER
 
-LDSCRIPT= $(TOPDIR)/nand_spl/board/$(BOARDDIR)/u-boot.lds
-LDFLAGS := -T $(nandobj)u-boot.lds -Ttext $(CONFIG_SYS_TEXT_BASE) $(LDFLAGS) \
-		$(LDFLAGS_FINAL) -gc-sections
-AFLAGS	+= -DCONFIG_NAND_SPL
-CFLAGS	+= -DCONFIG_NAND_SPL -ffunction-sections
-
-SOBJS	= start.o cpu_init.o lowlevel_init.o
-COBJS	= nand_boot.o nand_ecc.o s3c64xx.o nand_base.o
+SOBJS	= start.o mem_setup.o lowlevel_init.o
+COBJS	= mmc_boot.o
 
 SRCS	:= $(addprefix $(obj),$(SOBJS:.o=.S) $(COBJS:.o=.c))
 OBJS	:= $(addprefix $(obj),$(SOBJS) $(COBJS))
 __OBJS	:= $(SOBJS) $(COBJS)
-LNDIR	:= $(nandobj)board/$(BOARDDIR)
+LNDIR	:= $(OBJTREE)/mmc_spl/board/$(BOARDDIR)
 
-ALL	= $(nandobj)u-boot-spl $(nandobj)u-boot-spl.dis $(nandobj)u-boot-spl.bin $(nandobj)u-boot-spl-16k.bin
+mmcobj	:= $(OBJTREE)/mmc_spl/
 
-all:	$(obj).depend $(ALL)
 
-$(nandobj)u-boot-spl-16k.bin: $(nandobj)u-boot-spl
-	$(OBJCOPY) ${OBJCFLAGS} --pad-to=$(PAD_TO) -O binary $< $@
+MKV310_MMC_SPL_EXEC = mkv310_mmc_spl_exec
+MMC_SPL_BIN = u-boot-mmc-spl.bin
 
-$(nandobj)u-boot-spl.bin:	$(nandobj)u-boot-spl
+ALL = $(mmcobj)u-boot-spl $(mmcobj)u-boot-spl.bin $(mmcobj)$(MMC_SPL_BIN)
+
+all:    $(obj).depend $(ALL)
+
+$(mmcobj)$(MMC_SPL_BIN):  $(mmcobj)u-boot-spl.bin tools/$(MKV310_MMC_SPL_EXEC)
+	./tools/$(MKV310_MMC_SPL_EXEC) $(mmcobj)u-boot-spl.bin $(mmcobj)$(MMC_SPL_BIN)
+	rm -f tools/$(MKV310_MMC_SPL_EXEC)
+
+tools/$(MKV310_MMC_SPL_EXEC): tools/mkv310_image.c
+	$(HOSTCC) tools/mkv310_image.c -o tools/$(MKV310_MMC_SPL_EXEC)
+
+$(mmcobj)u-boot-spl.bin:	$(mmcobj)u-boot-spl
 	$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
 
-$(nandobj)u-boot-spl:	$(OBJS) $(nandobj)u-boot.lds
+$(mmcobj)u-boot-spl:	$(OBJS) $(mmcobj)u-boot.lds
 	cd $(LNDIR) && $(LD) $(LDFLAGS) $(__OBJS) \
-		-Map $(nandobj)u-boot-spl.map \
-		-o $(nandobj)u-boot-spl
+		-Map $(mmcobj)u-boot-spl.map \
+		-o $(mmcobj)u-boot-spl
 
-$(nandobj)u-boot.lds: $(LDSCRIPT)
+$(mmcobj)u-boot.lds: $(LDSCRIPT)
 	$(CPP) $(CPPFLAGS) $(LDPPFLAGS) -ansi -D__ASSEMBLY__ -P - <$^ >$@
-
-$(nandobj)u-boot-spl.dis:	$(nandobj)u-boot-spl
-		$(OBJDUMP) -d $< > $@
 
 # create symbolic links for common files
 
 # from cpu directory
 $(obj)start.S:
 	@rm -f $@
-	@ln -s $(TOPDIR)/arch/arm/cpu/arm1176/start.S $@
-
-# from SoC directory
-$(obj)cpu_init.S:
-	@rm -f $@
-	@ln -s $(TOPDIR)/arch/arm/cpu/arm1176/s3c64xx/cpu_init.S $@
+	@ln -s $(TOPDIR)/arch/arm/cpu/armv7/start.S $@
 
 # from board directory
+$(obj)mem_setup.S:
+	@rm -f $@
+	@ln -s $(TOPDIR)/board/samsung/smdkv310/mem_setup.S $@
+
 $(obj)lowlevel_init.S:
 	@rm -f $@
-	@ln -s $(TOPDIR)/board/ok6410/lowlevel_init.S $@
+	@ln -s $(TOPDIR)/board/samsung/smdkv310/lowlevel_init.S $@
 
-# from nand_spl directory
-$(obj)nand_boot.c:
-	@rm -f $@
-	@ln -s $(TOPDIR)/nand_spl/nand_boot.c $@
-
-# from drivers/mtd/nand directory
-$(obj)nand_ecc.c:
-	@rm -f $@
-	@ln -s $(TOPDIR)/drivers/mtd/nand/nand_ecc.c $@
-
-$(obj)s3c64xx.c:
-	@rm -f $@
-	@ln -s $(TOPDIR)/drivers/mtd/nand/s3c64xx.c $@
-
-$(obj)nand_base.c:
-	@rm -f $@
-	@ln -s $(TOPDIR)/drivers/mtd/nand/nand_base.c $@
 #########################################################################
 
 $(obj)%.o:	$(obj)%.S

@@ -51,7 +51,7 @@
 
 .globl _start
 _start: b	reset
-#ifndef CONFIG_NAND_SPL
+#if !(defined(CONFIG_NAND_SPL) || defined(CONFIG_MMC_SPL))
 	ldr	pc, _undefined_instruction
 	ldr	pc, _software_interrupt
 	ldr	pc, _prefetch_abort
@@ -164,7 +164,7 @@ cpu_init_crit:
 	 * When booting from NAND - it has definitely been a reset, so, no need
 	 * to flush caches and disable the MMU
 	 */
-#ifndef CONFIG_NAND_SPL
+#if !(defined(CONFIG_NAND_SPL) || defined(CONFIG_MMC_SPL))
 	/*
 	 * flush v4 I/D caches
 	 */
@@ -228,6 +228,7 @@ skip_tcmdisable:
 call_board_init_f:
 	ldr	sp, =(CONFIG_SYS_INIT_SP_ADDR)
 	bic	sp, sp, #7 /* 8-byte alignment for ABI compliance */
+#if !(defined(CONFIG_NAND_SPL) || defined(CONFIG_MMC_SPL))
 	ldr	r0,=0x00000000
 	bl	board_init_f
 
@@ -303,6 +304,7 @@ fixnext:
 	cmp	r2, r3
 	blo	fixloop
 #endif
+#endif
 
 #ifdef CONFIG_ENABLE_MMU
 enable_mmu:
@@ -356,7 +358,7 @@ clbss_l:str	r2, [r0]		/* clear loop...		    */
 	cmp	r0, r1
 	bne	clbss_l
 
-#ifndef CONFIG_NAND_SPL
+#if !(defined(CONFIG_NAND_SPL) || defined(CONFIG_MMC_SPL))
 	bl coloured_LED_init
 	bl red_led_on
 #endif
@@ -366,10 +368,54 @@ clbss_l:str	r2, [r0]		/* clear loop...		    */
  * We are done. Do not return, instead branch to second part of board
  * initialization, now running from RAM.
  */
-#ifdef CONFIG_NAND_SPL
-	ldr     pc, _nand_boot
+#if (defined(CONFIG_NAND_SPL) || defined(CONFIG_MMC_SPL))
+/*check boot status */
+#define MEM_CFG_STAT 0x7E00F12C
+//FIXME: Need to work more
+	ldr	r1, =MEM_CFG_STAT		/* address of reg  MEM_CFG_STAT*/
+	ldr	r0, [r1]
+	mov	r1, #0x60
+	and	r1, r0, r1			/*r1 = MEM_CFG_STAT & CFG_BOOT_LOC */
 
-_nand_boot: .word nand_boot
+	cmp	r1, #0x60		/*Internal ROM*/
+	//beq	boot_from_irom
+	cmp	r1, #0x00		/*Stepping Stone area in NFCON*/
+	beq	boot_from_nand
+	b	reset
+
+#if (defined(CONFIG_MMC_SPL) || defined(CONFIG_BOOT_AUTODETECT))
+boot_from_irom:
+/* boot from Internal ROM-->MMC boot*/
+#if defined(CONFIG_MINI6410_LED)
+/* R/W, Pull-up disable register */
+	mov	r1, #ELFIN_GPIO_BASE_8BIT
+	add	r1, r1, #ELFIN_GPK_BASE_8BIT
+	ldr	r2, =0x11111111
+	str	r2, [r1, #GPKCON0_OFFSET_8BIT]
+	ldr	r2, =0x0000AAAA
+	str	r2, [r1, #GPKPUD_OFFSET_8BIT]
+	ldr	r2, =0x0000ff7f
+	str	r2, [r1, #GPKDAT_OFFSET_8BIT]
+#endif
+	b mmc_boot_copy
+#endif
+
+#if (defined(CONFIG_NAND_SPL) || defined(CONFIG_BOOT_AUTODETECT))
+boot_from_nand:
+/* boot from Nand Flash*/
+#if defined(CONFIG_MINI6410_LED)
+/* R/W, Pull-up disable register */
+	mov	r1, #ELFIN_GPIO_BASE_8BIT
+	add	r1, r1, #ELFIN_GPK_BASE_8BIT
+	ldr	r2, =0x11111111
+	str	r2, [r1, #GPKCON0_OFFSET_8BIT]
+	ldr	r2, =0x0000AAAA
+	str	r2, [r1, #GPKPUD_OFFSET_8BIT]
+	ldr	r2, =0x0000ffff
+	str	r2, [r1, #GPKDAT_OFFSET_8BIT]
+#endif
+	b nand_boot
+#endif
 #else
 	ldr	r0, _board_init_r_ofs
 	adr	r1, _start
@@ -397,7 +443,7 @@ _mmu_table_base:
 	.word mmu_table
 #endif
 
-#ifndef CONFIG_NAND_SPL
+#if !(defined(CONFIG_NAND_SPL) || defined(CONFIG_MMC_SPL))
 /*
  * we assume that cache operation is done before. (eg. cleanup_before_linux())
  * actually, we don't need to do anything about cache if not use d-cache in
@@ -575,4 +621,4 @@ fiq:
 	get_bad_stack
 	bad_save_user_regs
 	bl	do_fiq
-#endif /* CONFIG_NAND_SPL */
+#endif /* CONFIG_NAND_SPL || CONFIG_MMC_SPL */

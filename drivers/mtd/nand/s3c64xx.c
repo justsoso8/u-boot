@@ -102,7 +102,8 @@ static void s3c_nand_hwcontrol(struct mtd_info *mtd, int cmd, unsigned int ctrl)
 			this->IO_ADDR_W = (void __iomem *)NFADDR;
 		else
 			this->IO_ADDR_W = (void __iomem *)NFDATA;
-		if (ctrl & NAND_NCE)
+
+        if (ctrl & NAND_NCE)
 			s3c_nand_select_chip(mtd, *(int *)this->priv);
 		else
 			s3c_nand_select_chip(mtd, -1);
@@ -160,20 +161,33 @@ static void s3c_nand_enable_hwecc(struct mtd_info *mtd, int mode)
 static int s3c_nand_calculate_ecc(struct mtd_info *mtd, const u_char *dat,
 				  u_char *ecc_code)
 {
-	u_long nfcont, nfmecc0;
+	u_long nfcont, nfmecc0, nfmecc1;
 
-	/* Lock */
+    /* Lock */
 	nfcont = readl(NFCONT);
 	nfcont |= NFCONT_MECCLOCK;
 	writel(nfcont, NFCONT);
 
+
 	nfmecc0 = readl(NFMECC0);
+#if defined(CONFIG_SYS_NAND_ECC_1BIT)
+	ecc_code[0] = nfmecc0 & 0xff;
+	ecc_code[1] = (nfmecc0 >> 8) & 0xff;
+	ecc_code[2] = (nfmecc0 >> 16) & 0xff;
+	ecc_code[3] = (nfmecc0 >> 24) & 0xff;
+#endif
+
+#if defined(CONFIG_SYS_NAND_ECC_4BIT)
+	nfmecc1 = readl(NFMECC1);
 
 	ecc_code[0] = nfmecc0 & 0xff;
 	ecc_code[1] = (nfmecc0 >> 8) & 0xff;
 	ecc_code[2] = (nfmecc0 >> 16) & 0xff;
 	ecc_code[3] = (nfmecc0 >> 24) & 0xff;
-
+	ecc_code[4] = nfmecc0 & 0xff;
+	ecc_code[5] = (nfmecc0 >> 8) & 0xff;
+	ecc_code[6] = (nfmecc0 >> 16) & 0xff;
+#endif
 	return 0;
 }
 
